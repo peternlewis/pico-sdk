@@ -86,10 +86,10 @@ def suffix_greater(suffix1, suffix2):
     if suffix2 == "":
         return True
     else:
-        m1 = re.match("^(\d+)([a-z])?$", suffix1)
+        m1 = re.match(r"^(\d+)([a-z])?$", suffix1)
         num1 = int(m1.group(1))
         alpha1 = m1.group(2)
-        m2 = re.match("^(\d+)([a-z])?$", suffix2)
+        m2 = re.match(r"^(\d+)([a-z])?$", suffix2)
         num2 = int(m2.group(1))
         alpha2 = m2.group(2)
         if num1 > num2:
@@ -105,7 +105,7 @@ def suffix_greater(suffix1, suffix2):
 def suffix_one_more_than(suffix1, suffix2):
     if suffix1 == suffix2:
         raise Exception(f"Identical suffixes {suffix1}")
-    m1 = re.match("^(\d+)([a-z])?$", suffix1)
+    m1 = re.match(r"^(\d+)([a-z])?$", suffix1)
     num1 = int(m1.group(1))
     alpha1 = m1.group(2)
     if suffix2 == "":
@@ -114,7 +114,7 @@ def suffix_one_more_than(suffix1, suffix2):
         else:
             return num1 == 1 and (alpha1 is None or alpha1 == "a")
     else:
-        m2 = re.match("^(\d+)([a-z])?$", suffix2)
+        m2 = re.match(r"^(\d+)([a-z])?$", suffix2)
         num2 = int(m2.group(1))
         alpha2 = m2.group(2)
         if num1 > num2:
@@ -159,7 +159,7 @@ if __name__ == "__main__":
                 # strip trailing comments
                 line = re.sub(r"\s*//.*$", "", line)
                 if line:
-                    if m := re.match("^\w+ ((\w+)2(\w+))\(([^\)]+)\);$", line):
+                    if m := re.match(r"^\w+ ((\w+)2(\w+))\(([^\)]+)\);$", line):
                         conversion_function = m.group(1)
                         from_type = m.group(2)
                         to_type = m.group(3)
@@ -188,7 +188,7 @@ if __name__ == "__main__":
                 conversion_functions[function].tested = True
                 if num_input_args != conversion_functions[function].num_input_args:
                     raise Exception(f"{filename}:{lineno} {num_input_args} arguments were passed to {function} which only expects {conversion_functions[function].num_input_args} arguments")
-            function_group = re.sub("_(\d+)$", "_N", function)
+            function_group = re.sub(r"_(\d+)$", "_N", function)
             if function_group not in function_groups:
                 raise Exception(f"{filename}:{lineno} Unexpected function group {function_group}")
             else:
@@ -199,7 +199,7 @@ if __name__ == "__main__":
             if not test_name.startswith(expected_prefix):
                 raise Exception(f"{filename}:{lineno} {test_name} tests {function}, so expected it to start with {expected_prefix}")
             if ENFORCE_UNDERSCORE_IN_SUFFIX_IF_FUNCTION_ENDS_WITH_NUMBER:
-                if re.search("\d$", function):
+                if re.search(r"\d$", function):
                     expected_prefix += "_"
                     if not test_name.startswith(expected_prefix):
                         raise Exception(f"{filename}:{lineno} {function} ends with a number, so expected the test name ({test_name}) to start with {expected_prefix}")
@@ -210,7 +210,7 @@ if __name__ == "__main__":
                 test_suffix = re.sub(f"^{re.escape(expected_prefix)}", "", test_name)
             else:
                 test_suffix = re.sub(f"^{re.escape(expected_prefix)}_?", "", test_name)
-            if not re.match("^\d+([a-z])?$", test_suffix):
+            if not re.match(r"^\d+([a-z])?$", test_suffix):
                 raise Exception(f"{filename}:{lineno} {test_name} has suffix {test_suffix} which doesn't match the expected pattern of a number followed by an optional letter")
             if not suffix_greater(test_suffix, conversion_functions[function].last_test_suffix):
                 raise Exception(f"{filename}:{lineno} {test_name} follows {conversion_functions[function].last_test} but has a smaller suffix")
@@ -232,12 +232,12 @@ if __name__ == "__main__":
                 # strip trailing comments
                 line = re.sub(r"\s*//.*$", "", line)
                 if line:
-                    if m := re.match("^#define (test_check(\w+))\(", line):
+                    if m := re.match(r"^#define (test_check(\w+))\(", line):
                         test_macro = m.group(1)
                         short_type = m.group(2)
                         #print(lineno, line, test_macro)
                         add_test_macro(test_macros, test_macro, short_type, check.tests_file, lineno)
-                    elif m := re.match("^#define ((\w+)2(\w+))\(([^\)]+)\)", line):
+                    elif m := re.match(r"^#define ((\w+)2(\w+))\(([^\)]+)\)", line):
                         conversion_function = m.group(1)
                         from_type = m.group(2)
                         to_type = m.group(3)
@@ -248,7 +248,7 @@ if __name__ == "__main__":
                         else:
                             if num_input_args != conversion_functions[conversion_function].num_input_args:
                                 raise Exception(f"{check.tests_file}:{lineno} {conversion_function} has a different number of arguments to the counterpart in {check.header_file}")
-                    elif m := re.match("^\w+ __attribute__\(\(naked\)\) (call_((\w+)2(\w+)))\(([^\)]+)\)", line):
+                    elif m := re.match(r"^\w+ __attribute__\(\(naked\)\) (call_((\w+)2(\w+)))\(([^\)]+)\)", line):
                         conversion_function = m.group(1)
                         base_function = m.group(2)
                         from_type = m.group(3)
@@ -261,18 +261,18 @@ if __name__ == "__main__":
                             if num_input_args != conversion_functions[base_function].num_input_args:
                                 raise Exception(f"{check.tests_file}:{lineno} {conversion_function} has a different number of arguments to {base_function}")
                         add_conversion_function(conversion_functions, conversion_function, from_type, to_type, num_input_args, check.tests_file, lineno)
-                    elif m := re.match("^static inline (?:float|double) ((\w+)2(\w+_\d+))\(([^\)]+)\)", line):
+                    elif m := re.match(r"^static inline (?:float|double) ((\w+)2(\w+_\d+))\(([^\)]+)\)", line):
                         conversion_function = m.group(1)
                         from_type = m.group(2)
                         to_type = m.group(3)
                         num_input_args = len(m.group(4).split(","))
                         #print(lineno, line, conversion_function)
-                        m = re.match("^static inline (?:float|double) (\w+2\w+)_\d+\(", line)
+                        m = re.match(r"^static inline (?:float|double) (\w+2\w+)_\d+\(", line)
                         base_function = m.group(1)
                         if base_function not in conversion_functions:
                             raise Exception(f"{check.tests_file}:{lineno} {conversion_function} exists but {base_function} doesn't exist")
                         add_conversion_function(conversion_functions, conversion_function, from_type, to_type, num_input_args, check.tests_file, lineno)
-                    elif m := re.match("^printf\(\"((\w+)2(\w+))\\\\n\"\);$", line):
+                    elif m := re.match(r"^printf\(\"((\w+)2(\w+))\\n\"\);$", line):
                         function_group = m.group(1)
                         from_type = m.group(2)
                         to_type = m.group(3)
@@ -282,7 +282,7 @@ if __name__ == "__main__":
                                 raise Exception(f"{check.tests_file}:{lineno} Function group {function_group} has no corresponding conversion function")
                         add_function_group(function_groups, function_group, from_type, to_type, check.tests_file, lineno)
                         last_function_group = function_group
-                    elif m := re.match("^(test_\w+)\(((\w+?)2(\w+))\(([^\)]+(?:\(.*?\))?)\), ([^,]+), \"(\w+)\"\);$", line):
+                    elif m := re.match(r"^(test_\w+)\(((\w+?)2(\w+))\(([^\)]+(?:\(.*?\))?)\), ([^,]+), \"(\w+)\"\);$", line):
                         test_macro = m.group(1)
                         function = m.group(2)
                         from_type = m.group(3)
@@ -291,7 +291,7 @@ if __name__ == "__main__":
                         compare_val = m.group(6)
                         test_name = m.group(7)
                         _check_test(check.tests_file, lineno, line, test_macro, function, num_input_args, compare_val, to_type, test_name)
-                    elif m:= re.match("^(test_\w+)\(((double)2(int))20, ([^,]+), \"(\w+)\"\);$", line):
+                    elif m:= re.match(r"^(test_\w+)\(((double)2(int))20, ([^,]+), \"(\w+)\"\);$", line):
                         # special-case, because it uses a stored value rather than an inline conversion
                         test_macro = m.group(1)
                         function = m.group(2)

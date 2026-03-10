@@ -129,6 +129,8 @@ extern "C" {
 * On RISC-V there is no custom double-precision floating point support, so `pico_double_pico` is equivalent to `pico_double_compiler`
 * \endif
 */
+
+// PICO_CONFIG: PICO_DOUBLE_IN_RAM, Force placement of SDK provided double-precision floating point into RAM, type=bool, default=0, group=pico_double
 #if !defined(__riscv) || PICO_COMBINED_DOCS
 
 #if PICO_COMBINED_DOCS || !LIB_PICO_DOUBLE_COMPILER

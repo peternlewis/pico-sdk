@@ -6,6 +6,10 @@
 
 #include "pico/asm_helper.S"
 
+#ifndef PICO_DOUBLE_IN_RAM
+#define PICO_DOUBLE_IN_RAM 0
+#endif
+
 pico_default_asm_setup
 
 .macro double_section name

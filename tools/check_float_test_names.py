@@ -8,7 +8,7 @@ from dataclasses import dataclass
 
 ALLOW_TEST_SUFFIXES_TO_START_AT_ZERO = True # if False, don't allow "float2fix0"
 ALLOW_TEST_SUFFIXES_TO_SKIP_A = True # if False, don't allow "float2int1b" to follow "float2int1"
-ENFORCE_UNDERSCORE_IN_SUFFIX_IF_FUNCTION_ENDS_WITH_NUMBER = False # if False, allow "float2fix641"
+ENFORCE_UNDERSCORE_IN_SUFFIX_IF_FUNCTION_ENDS_WITH_NUMBER = True # if False, allow "float2fix641"
 
 Check = namedtuple("Check", ("test_type", "header_file", "tests_file"))
 
